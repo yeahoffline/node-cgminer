@@ -1,29 +1,50 @@
 {
   "name": "cgminer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "API client for CGMiner Bitcoin miner",
-  "main": "index.coffee",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tlrobinson/node-cgminer.git"
+    "url": "git+https://github.com/minera/node-cgminer.git"
   },
   "keywords": [
     "bitcoin",
     "cgminer",
+    "bfgminer",
     "client",
     "promises",
     "promises/a",
     "promises/a+",
     "q"
   ],
-  "author": "Tom Robinson",
+  "author": {
+    "name": "Michele Marcucci"
+  },
   "license": "BSD",
   "dependencies": {
-    "q": "~0.9.6",
-    "coffee-script": "~1.6.3"
+    "q": "~0.9.6"
   },
-  "bin": { "cgminer-cli": "./bin/cgminer-cli" }
+  "readme": "node-cgminer\n============\n\nUsage\n-----\n\nCGMiner command return a Promises/A compatible promise (specifically a [Q](https://github.com/kriskowal/q) promise):\n\n    var client = new CGMinerClient(HOST, PORT);\n    client.COMMAND(ARG1, ARG2).then(function(results) {\n      console.log(results);\n    }, function(err) {\n      // error handler\n    });\n\nCOMMAND corresponds to one of the commands detailed in [CGMiner's API documentation](https://github.com/ckolivas/cgminer/blob/master/API-README).\n\nTODO\n----\n\n* Some commands return the raw JSON response object while other return a customized object (`devs`, etc).\n* Documentation.",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/minera/node-cgminer/issues"
+  },
+  "_id": "cgminer@0.1.1",
+  "_from": "cgminer@latest",
+  "_npmVersion": "1.2.25",
+  "_npmUser": {
+    "name": "minera",
+    "email": "support@minera.com"
+  },
+  "maintainers": [
+    {
+      "name": "minera",
+      "email": "support@minera.com"
+    }
+  ],
+  "directories": {},
+  "homepage": "https://github.com/minera/node-cgminer#readme"
 }
