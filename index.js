@@ -15,14 +15,15 @@ CGMinerClient = (function() {
   }
 
   CGMinerClient.prototype.request = function() {
-    var args, command, deferred, socket;
+    var args, command, deferred, socket, timeoutMsg;
     command = arguments[0], args = 2 <= arguments.length ? slice.call(arguments, 1) : [];
-    
+   
+    timeoutMsg = "Connection to " + this.host + ":" + this.port + " timed out"; 
     deferred = Q.defer();
 
     // Set a timeout to receive data otherwise thrown an error
     Q.delay(this.timeout).then(function () {
-      deferred.reject(new Error("Timed out"));
+      return deferred.reject(new Error(timeoutMsg));
     });
 
     socket = net.connect({
@@ -30,8 +31,15 @@ CGMinerClient = (function() {
       port: this.port
     });
 
+    socket.setTimeout(this.timeout);
+
     socket.on("error", function(err) {
       return deferred.reject(err);
+    });
+
+    socket.on("timeout", function() {
+      socket.end();
+      return deferred.reject(new Error(timeoutMsg));
     });
 
     socket.on("connect", function() {
@@ -46,7 +54,6 @@ CGMinerClient = (function() {
         var err;
         try {
           Q.when(buffer, deferred.resolve(JSON.parse(buffer.replace(/[^\}]+$/, ""))));
-          // return deferred.resolve(JSON.parse(buffer.replace(/[^\}]+$/, "")));
         } catch (_error) {
           err = _error;
           return deferred.reject(err);
