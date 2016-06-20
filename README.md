@@ -9,7 +9,7 @@ Usage
 CGMiner command return a Promises/A compatible promise (specifically a [Q](https://github.com/kriskowal/q) promise):
 
     var client = new CGMinerClient({host: HOST, port: PORT, timeout: TIMEOUT});
-    client.COMMAND(ARG1, ARG2).then(function(results) {
+    client.cmd(COMMAND, ARG1, ARG2).then(function(results) {
       console.log(results);
     }, function(err) {
       // error handler

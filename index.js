@@ -17,12 +17,11 @@ CGMinerClient = (function() {
   CGMinerClient.prototype.request = function() {
     var args, command, deferred, socket, timeoutMsg;
     command = arguments[0], args = 2 <= arguments.length ? slice.call(arguments, 1) : [];
-   
     timeoutMsg = "Connection to " + this.host + ":" + this.port + " timed out"; 
     deferred = Q.defer();
 
     // Set a timeout to receive data otherwise thrown an error
-    Q.delay(this.timeout).then(function () {
+    Q.delay(this.timeout+1000).then(function () {
       return deferred.reject(new Error(timeoutMsg));
     });
 
@@ -68,57 +67,25 @@ CGMinerClient = (function() {
     return deferred.promise;
   };
 
-  CGMinerClient.prototype._version = function(r) {
-    return r.VERSION[0];
-  };
-
-  CGMinerClient.prototype._devs = function(r) {
-    return r.DEVS;
-  };
-
   return CGMinerClient;
 
 })();
 
-ref = ["pga", "gpu", "asc"];
-fn = function(device) {
-  var deviceUC;
-  deviceUC = device.toUpperCase();
-  CGMinerClient.prototype["_" + device] = function(r) {
-    return r["" + deviceUC][0];
-  };
-  return CGMinerClient.prototype["_" + device + "count"] = function(r) {
-    return r[deviceUC + "S"][0].Count;
-  };
+CGMinerClient.prototype.cmd = function() {
+  var args;
+  args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+  return this.request.apply(this, args).then((function(_this) {
+    return function(result) {
+      if (_this["_" + name] != null) {
+        return Q["try"](function() {
+          return _this["_" + name](result);
+        });
+      } else {
+        return result;
+      }
+    };
+  })(this));
 };
-for (i = 0, len = ref.length; i < len; i++) {
-  device = ref[i];
-  fn(device);
-}
-
-CGMinerClient.commands = require("./commands").getCommands();
-
-ref1 = CGMinerClient.commands;
-fn1 = function(name, command) {
-  return CGMinerClient.prototype[name] = function() {
-    var args;
-    args = 1 <= arguments.length ? slice.call(arguments, 0) : [];
-    return this.request.apply(this, [name].concat(args)).then((function(_this) {
-      return function(result) {
-        if (_this["_" + name] != null) {
-          return Q["try"](function() {
-            return _this["_" + name](result);
-          });
-        } else {
-          return result;
-        }
-      };
-    })(this));
-  };
-};
-for (name in ref1) {
-  command = ref1[name];
-  fn1(name, command);
-}
 
 module.exports = CGMinerClient;
+
