@@ -17,7 +17,7 @@ CGMinerClient = (function() {
   CGMinerClient.prototype.request = function() {
     var args, command, deferred, socket, timeoutMsg;
     command = arguments[0], args = 2 <= arguments.length ? slice.call(arguments, 1) : [];
-    timeoutMsg = "Connection to " + this.host + ":" + this.port + " timed out"; 
+    timeoutMsg = "Connection to " + this.host + ":" + this.port + " timed out";
     deferred = Q.defer();
 
     // Set a timeout to receive data otherwise thrown an error
@@ -52,7 +52,7 @@ CGMinerClient = (function() {
       socket.on("end", function() {
         var err;
         try {
-          Q.when(buffer, deferred.resolve(JSON.parse(buffer.replace(/[^\}]+$/, ""))));
+          Q.when(buffer, deferred.resolve(JSON.parse(buffer.replace(/[^\}]+$/, "").replace('}{', '},{'))));
         } catch (_error) {
           err = _error;
           return deferred.reject(err);
@@ -88,4 +88,3 @@ CGMinerClient.prototype.cmd = function() {
 };
 
 module.exports = CGMinerClient;
-
